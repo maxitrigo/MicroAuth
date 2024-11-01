@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Headers, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Headers, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
@@ -19,21 +19,20 @@ export class AuthController {
     }
 
     @Post('change-password')
-    @UseGuards(JwtAuthGuard)
-    async changePassword(@Body('email') email: string, @Body('currentPassword') currentPassword: string, @Body('newPassword') newPassword: string) {
-        return this.authService.changePassword(email, currentPassword, newPassword);
+    @UseGuards(JwtAuthGuard) // the token must be provided in the header, the same token you requested in the login or register (Authorization: Bearer <token>)
+    async changePassword(@Headers('authorization') authHeader: string, @Body('currentPassword') currentPassword: string, @Body('newPassword') newPassword: string) {
+        const token = authHeader.split(' ')[1];
+        return this.authService.changePassword(token, currentPassword, newPassword);
     }
 
     @Post('request-password-reset')
     async requestPasswordReset(@Body('email') email: string) {
-        console.log(email);
-        
         return this.authService.requestPasswordReset(email);
     }
 
     @Post('reset-password')
     async resetPassword(
-        @Param('resetToken') resetToken: string,
+        @Body('resetToken') resetToken: string, // the same token you requested in the request-password-reset
         @Body('newPassword') newPassword: string
     ){
         return this.authService.resetPassword(resetToken, newPassword);
@@ -43,7 +42,7 @@ export class AuthController {
     @Delete('delete')
     async deleteUser(
         @Body('email') targetUser: string,
-        @Headers('authorization') authHeader: string
+        @Headers('authorization') authHeader: string // the same token you requested in the login or register  (Authorization: Bearer <token>)
     ) {
         const token = authHeader.split(' ')[1];
         return this.authService.deleteUser(targetUser, token);

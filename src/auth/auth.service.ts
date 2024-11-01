@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { MailService } from '../mail/mail.service';
 import * as bcrypt from 'bcrypt';
@@ -6,8 +6,6 @@ import { UsersRepository } from 'src/users/users.repository';
 
 @Injectable()
 export class AuthService {
-
-    private users = []
 
     constructor(
         private jwtService: JwtService,
@@ -21,6 +19,7 @@ export class AuthService {
         if (existingUser) {
             throw new BadRequestException('User already exists');
         }
+
         const hashedPassword = await bcrypt.hash(password, 10);
         await this.usersRepository.create(email, hashedPassword)
         const newUser = await this.usersRepository.findOne(email)
@@ -38,21 +37,24 @@ export class AuthService {
         throw new UnauthorizedException('Invalid credentials');
     }
 
-    async changePassword(email: string, currentPassword: string, newPassword: string) {
+    async changePassword(token: string, currentPassword: string, newPassword: string) {
+        if(!token || !currentPassword || !newPassword) throw new UnauthorizedException('Invalid credentials');
+        const decoded = this.jwtService.verify(token);
+        const { email } = decoded;
         const user = await this.usersRepository.findOne(email);
         if (user && (await bcrypt.compare(currentPassword, user.password))) {
             const hashedPassword = await bcrypt.hash(newPassword, 10);
             await this.usersRepository.changePassword(email, hashedPassword);
             return { message: 'Password changed successfully' };
         }
-        throw new Error('Invalid credentials');
+        throw new UnauthorizedException('Invalid credentials');
     }
 
     async requestPasswordReset(email: string) {
         const user = await this.usersRepository.findOne(email);
         
         if (!user) {
-            throw new Error ('User not found');
+            throw new NotFoundException('User not found');
         }
 
         const payload = { email: user.email };
@@ -75,25 +77,23 @@ export class AuthService {
             await this.usersRepository.changePassword(email, hashedPassword);
             return { message: 'Password reset successfully' };
         } catch (error) {
-            throw new Error ('Invalid reset token');
+            throw new UnauthorizedException ('Invalid reset token');
         }
     }
 
     async deleteUser(targetUserEmail: string, token: string) {
         const decoded = this.jwtService.verify(token)
         const { email: userEmail, role: userRole } = decoded
-        console.log();
-        
 
         const targetUser = await this.usersRepository.findOne(targetUserEmail)
-        if(!targetUser) throw new BadRequestException('User not found')
+        if(!targetUser) throw new NotFoundException('User not found')
 
-            // Verifica permisos: admin o eliminación de su propia cuenta
+            // check if user is admin or the target user is the same as the logged in user
         if (userRole === 'admin' || userEmail === targetUserEmail) {
             await this.usersRepository.delete(targetUserEmail)
             return { message: `Usuario ${targetUserEmail} eliminado con éxito.` };
         }
         
-        throw new Error('No tienes permisos para eliminar esta cuenta.');
+        throw new UnauthorizedException('No tienes permisos para eliminar esta cuenta.');
     }
 }
