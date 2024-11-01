@@ -48,3 +48,20 @@ $ npm run start:prod
 ## Documentación de la API
 
 Puedes ver la documentación de la API [aquí](./api.md).
+
+
+.env example 
+
+DB_PORT=5432
+DB_TYPE=postgres
+DB_HOST=localhost
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+DB_DATABASE=your_database_name
+
+JWT_SECRET=your_jwt_secret
+
+MAIL_USERNAME=your_mail_username
+MAIL_PASSWORD=your_mail_password
+MAIL_PORT=587
+MAIL_HOST=smtp.mailgun.org
