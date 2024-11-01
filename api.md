@@ -41,7 +41,7 @@ The MicroAuth API documentation
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| authorization | header | Authorization: Bearer <token> | Yes | string |
+| authorization | header | Authorization: Bearer token | Yes | string |
 
 ##### Responses
 
@@ -88,7 +88,7 @@ The MicroAuth API documentation
 
 | Name | Located in | Description | Required | Schema |
 | ---- | ---------- | ----------- | -------- | ---- |
-| authorization | header | Authorization: Bearer <token> | Yes | string |
+| authorization | header | Authorization: Bearer token | Yes | string |
 
 ##### Responses
 
