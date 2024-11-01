@@ -23,7 +23,7 @@ export class AuthService {
         const hashedPassword = await bcrypt.hash(password, 10);
         await this.usersRepository.create(email, hashedPassword)
         const newUser = await this.usersRepository.findOne(email)
-        const token = this.jwtService.sign({ email: newUser.email, role: newUser.role }, { expiresIn: '1h' });
+        const token = this.jwtService.sign({id: newUser.id, email: newUser.email, role: newUser.role }, { expiresIn: '1h' });
 
         return { token };
     }
@@ -31,7 +31,7 @@ export class AuthService {
     async login(email: string, password: string) {
         const user = await this.usersRepository.findOne(email);
         if (user && ( await bcrypt.compare(password, user.password))) {
-            const token = this.jwtService.sign({ email, role: user.role }, { expiresIn: '1h' });
+            const token = this.jwtService.sign({id: user.id, email, role: user.role }, { expiresIn: '1h' });
             return { token };
         }
         throw new UnauthorizedException('Invalid credentials');
