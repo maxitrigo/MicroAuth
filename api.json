@@ -1,0 +1,187 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User created successfully" },
+          "400": { "description": "Bad request" }
+        },
+        "tags": ["auth"]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful" },
+          "400": { "description": "Bad request" }
+        },
+        "tags": ["auth"]
+      }
+    },
+    "/auth/change-password": {
+      "post": {
+        "operationId": "AuthController_changePassword",
+        "parameters": [
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ChangePasswordDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Password changed successfully" },
+          "400": { "description": "Bad request" }
+        },
+        "tags": ["auth"]
+      }
+    },
+    "/auth/request-password-reset": {
+      "post": {
+        "operationId": "AuthController_requestPasswordReset",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RequestResetDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Password reset email sent" },
+          "400": { "description": "Bad request" },
+          "404": { "description": "User not found" }
+        },
+        "tags": ["auth"]
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "operationId": "AuthController_resetPassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ResetPasswordDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Password changed successfully" },
+          "400": { "description": "Bad request" }
+        },
+        "tags": ["auth"]
+      }
+    },
+    "/auth/delete": {
+      "delete": {
+        "operationId": "AuthController_deleteUser",
+        "parameters": [
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/DeleteDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "User deleted successfully" },
+          "400": { "description": "Bad request" }
+        },
+        "tags": ["auth"]
+      }
+    }
+  },
+  "info": {
+    "title": "MicroAuth",
+    "description": "The MicroAuth API documentation",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [{ "name": "auth", "description": "" }],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "example": "user@example.com" },
+          "password": { "type": "string", "example": "Password123!" }
+        },
+        "required": ["email", "password"]
+      },
+      "ChangePasswordDto": {
+        "type": "object",
+        "properties": {
+          "currentPassword": { "type": "string", "example": "123Password!" },
+          "newPassword": { "type": "string", "example": "Password123!" }
+        },
+        "required": ["currentPassword", "newPassword"]
+      },
+      "RequestResetDto": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "example": "user@example.com" }
+        },
+        "required": ["email"]
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "resetToken": {
+            "type": "string",
+            "example": "jhfddasj123kjb198983bkjbaks349847jbfkdjbfd230187312kjdfbf"
+          },
+          "newPassword": { "type": "string", "example": "123Password!" }
+        },
+        "required": ["resetToken", "newPassword"]
+      },
+      "DeleteDto": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string", "example": "user@example.com" }
+        },
+        "required": ["email"]
+      }
+    }
+  }
+}
