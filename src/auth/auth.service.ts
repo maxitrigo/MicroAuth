@@ -3,6 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { MailService } from '../mail/mail.service';
 import * as bcrypt from 'bcrypt';
 import { UsersRepository } from 'src/users/users.repository';
+import { Roles } from 'src/users/roles.enum';
+import { RegisterDto } from '../dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +15,12 @@ export class AuthService {
         private usersRepository: UsersRepository
     ) {}
 
-    async register(email: string, password: string) {
+    async getStaff() {
+        return await this.usersRepository.findByRole(Roles.Staff);
+    }
+
+    async register(RegisterDto: RegisterDto) {
+        const { email, password, name } = RegisterDto
         const existingUser = await this.usersRepository.findOne(email);
         
         if (existingUser) {
@@ -21,9 +28,9 @@ export class AuthService {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        await this.usersRepository.create(email, hashedPassword)
+        await this.usersRepository.create(email, hashedPassword, name)
         const newUser = await this.usersRepository.findOne(email)
-        const token = this.jwtService.sign({id: newUser.id, email: newUser.email, role: newUser.role }, { expiresIn: '1h' });
+        const token = this.jwtService.sign({id: newUser.id, name: newUser.name, email: newUser.email, role: newUser.role }, { expiresIn: '1h' });
 
         return { token };
     }
@@ -44,7 +51,7 @@ export class AuthService {
         const user = await this.usersRepository.findOne(email);
         if (user && (await bcrypt.compare(currentPassword, user.password))) {
             const hashedPassword = await bcrypt.hash(newPassword, 10);
-            await this.usersRepository.changePassword(email, hashedPassword);
+            await this.usersRepository.update(email, hashedPassword);
             return { message: 'Password changed successfully' };
         }
         throw new UnauthorizedException('Invalid credentials');
@@ -74,11 +81,23 @@ export class AuthService {
                 throw new Error ('User not found');
             }
             const hashedPassword = await bcrypt.hash(newPassword, 10);
-            await this.usersRepository.changePassword(email, hashedPassword);
+            await this.usersRepository.update(email, hashedPassword, undefined);
             return { message: 'Password reset successfully' };
         } catch (error) {
             throw new UnauthorizedException ('Invalid reset token');
         }
+    }
+
+    async updateUserRole(token: string, email: string, role: string) {
+        const decoded = this.jwtService.verify(token)
+        const { role: userRole } = decoded
+
+        const targetUser = await this.usersRepository.findOne(email)
+        if(!targetUser) throw new NotFoundException('User not found')
+        if(userRole !== Roles.Admin) {
+            throw new UnauthorizedException('Invalid Credentials');
+        }
+        await this.usersRepository.update(email, undefined, role)
     }
 
     async deleteUser(targetUserEmail: string, token: string) {
@@ -89,7 +108,7 @@ export class AuthService {
         if(!targetUser) throw new NotFoundException('User not found')
 
             // check if user is admin or the target user is the same as the logged in user
-        if (userRole === 'admin' || userEmail === targetUserEmail) {
+        if (userRole === Roles.Admin || userEmail === targetUserEmail) {
             await this.usersRepository.delete(targetUserEmail)
             return { message: `Usuario ${targetUserEmail} eliminado con éxito.` };
         }
