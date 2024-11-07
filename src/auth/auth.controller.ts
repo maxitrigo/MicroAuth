@@ -38,8 +38,8 @@ export class AuthController {
     @ApiResponse({ status: 400, description: 'Bad request' })
     async login(@Body()LoginDto: LoginDto) {
         const { email, password } = LoginDto
-        const token = await this.authService.login(email, password);
-        return { login: "true", token: token.token }
+        const response = await this.authService.login(email, password);
+        return { login: "true", token: response.token, name: response.name, email: response.email, role: response.role }
     }
 
     @Post('change-password')

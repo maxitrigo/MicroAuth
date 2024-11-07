@@ -39,7 +39,7 @@ export class AuthService {
         const user = await this.usersRepository.findOne(email);
         if (user && ( await bcrypt.compare(password, user.password))) {
             const token = this.jwtService.sign({id: user.id, email, role: user.role }, { expiresIn: '1h' });
-            return { token };
+            return { token: token, name: user.name, email: user.email, role: user.role };
         }
         throw new UnauthorizedException('Invalid credentials');
     }
