@@ -1,14 +1,14 @@
 import { Body, Controller, Delete, Get, Headers, Patch, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
-import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RegisterDto } from 'src/dto/register.dto';
 import { ChangePasswordDto } from 'src/dto/changePassword.dto';
 import { RequestResetDto } from 'src/dto/requestReset.dto';
 import { ResetPasswordDto } from 'src/dto/resetPassword.dto';
 import { DeleteDto } from 'src/dto/delete.dto';
 import { ChangeRoleDto } from 'src/dto/changeRole.dto';
-import { LoginDto } from 'src/dto/login.dtio';
+import { LoginDto } from 'src/dto/login.dto';
 
 @ApiTags('auth')
 @Controller('auth')

@@ -18,6 +18,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.use(morgan('dev'))
+  app.enableCors();
   await app.listen(3001);
 }
 bootstrap();
