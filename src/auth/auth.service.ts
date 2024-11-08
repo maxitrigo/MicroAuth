@@ -98,6 +98,11 @@ export class AuthService {
             throw new UnauthorizedException('Invalid Credentials');
         }
         await this.usersRepository.update(email, undefined, role)
+        const updatedUser = await this.usersRepository.findOne(email)
+
+        const newToken = this.jwtService.sign({id: updatedUser.id, name: updatedUser.name, email: updatedUser.email, role: updatedUser.role }, { expiresIn: '1h' });
+
+        return { newToken }
     }
 
     async deleteUser(targetUserEmail: string, token: string) {
