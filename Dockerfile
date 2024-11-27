@@ -19,7 +19,7 @@ COPY . .
 # Compila la aplicación
 RUN npm run build
 
-# Expone el puerto que usa tu aplicación (ajusta si es necesario)
+# Expone el puerto que usa tu aplicación (ajusta si es necesario).
 EXPOSE 3001
 
 # Comando para iniciar la aplicación
