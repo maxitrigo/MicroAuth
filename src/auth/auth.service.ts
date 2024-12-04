@@ -65,7 +65,7 @@ export class AuthService {
         }
 
         const payload = { email: user.email };
-        const resetToken = this.jwtService.sign(payload, { expiresIn: '1h' });
+        const resetToken = this.jwtService.sign(payload, { expiresIn: '10m' });
 
         await this.mailService.sendResetEmail(user.email, resetToken);
 

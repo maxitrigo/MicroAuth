@@ -13,3 +13,4 @@ export const MAIL_USERNAME = process.env.MAIL_USERNAME
 export const MAIL_PASSWORD = process.env.MAIL_PASSWORD
 export const MAIL_PORT = process.env.MAIL_PORT
 export const MAIL_HOST = process.env.MAIL_HOST
+export const MAIL_SENDER = process.env.MAIL_SENDER
