@@ -44,3 +44,33 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/microauth:latest
+
+      - name: Set up SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > /tmp/ec2_key.pem
+          chmod 600 /tmp/ec2_key.pem
+
+      - name: Deploy to EC2
+        run: |
+          ssh -i /tmp/ec2_key.pem -o StrictHostKeyChecking=no ubuntu@ec2-18-231-148-87.sa-east-1.compute.amazonaws.com << 'EOF'
+            echo "Iniciando sesión en EC2..."
+
+            echo "ir a la carpeta raiz"
+            cd gymmetrics
+
+            # Guardar el archivo .env en la carpeta gymmetrics
+            echo "${{ secrets.ENV_FILE }}" > ~/gymmetrics/.env
+
+            echo "Deteniendo dockers activos..."
+            docker-compose down
+
+            echo "Bajando la imagen de docker.."
+            docker-compose pull
+
+            echo "Reiniciando dockers.."
+            docker-compose up -d
+
+            echo "Limpiando imágenes no utilizadas..."
+            docker image prune -f  # Elimina imágenes no utilizadas
+
+          EOF
