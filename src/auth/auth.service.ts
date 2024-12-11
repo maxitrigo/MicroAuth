@@ -69,7 +69,7 @@ export class AuthService {
 
         await this.mailService.sendResetEmail(user.email, resetToken);
 
-        return { message: 'Password reset email sent' };
+        return { message: 'Password reset email sent.' };
     }
 
     async resetPassword(resetToken: string, newPassword: string) {
