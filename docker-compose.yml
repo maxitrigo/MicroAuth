@@ -26,11 +26,5 @@ services:
     env_file:
       - .env
 
-  frontend:
-    image: maxitrigo/gymmetrics-front:latest
-    ports:
-      - '8080:80'  # Mapea el puerto 80 del contenedor al 8080 del host
-    restart: always
-
 volumes:
   postgres-data:

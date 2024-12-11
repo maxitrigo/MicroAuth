@@ -10,7 +10,7 @@ export class JwtAuthGuard implements CanActivate {
         const authHeader = request.headers['authorization']
 
         if(!authHeader) {
-            throw new UnauthorizedException('Authorization header is required');
+            throw new UnauthorizedException('Authorization header is required.');
         }
         
         const [Bearer, token] = authHeader.split(' ')
