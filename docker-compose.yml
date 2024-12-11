@@ -1,18 +1,19 @@
 version: '3.8'
+
 services:
   backend:
     image: maxitrigo/microauth:latest
     ports:
-      - '80:3001'  # Cambiado a puerto 80 para coincidir con tu configuración de despliegue
+      - '3001:3001'  # Backend escucha en el puerto 3001
     env_file:
-      - .env  # Usando el archivo .env descargado de S3
+      - .env
     command: npm run start:prod
     restart: always
 
   postgres-auth:
     image: postgres:latest
     env_file:
-      - .env  # Usando el archivo .env para la base de datos.
+      - .env
     ports:
       - '5432:5432'
     volumes:
@@ -24,5 +25,12 @@ services:
       - '5050:80'
     env_file:
       - .env
+
+  frontend:
+    image: maxitrigo/gymmetrics-front:latest
+    ports:
+      - '8080:80'  # Mapea el puerto 80 del contenedor al 8080 del host
+    restart: always
+
 volumes:
   postgres-data:
