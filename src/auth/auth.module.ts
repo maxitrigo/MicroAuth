@@ -12,7 +12,7 @@ import { JWT_SECRET } from 'src/config/env.config';
     UsersModule,
     PassportModule,
     JwtModule.register({
-      secret: JWT_SECRET, //cambiar en prod.
+      secret: JWT_SECRET, //cambiar en prod..
       signOptions: { expiresIn: '4h' }
     })
   ],
