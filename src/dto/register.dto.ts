@@ -12,7 +12,7 @@ export class RegisterDto {
     @IsNotEmpty()
     password: string;
 
-    @ApiProperty({ example: 'Maximiliano' })
+    @ApiProperty({ example: 'Maximiliano Trigo' })
     @IsString()
     @IsNotEmpty()
     name: string
